@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>图片裁切</title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery.Jcrop.js"></script>
+<script src="js/xiaoguo.js"></script>
+<link rel="stylesheet" href="demo_files/main.css" type="text/css" />
+<link rel="stylesheet" href="demo_files/demos.css" type="text/css" />
+<link rel="stylesheet" href="css/jquery.Jcrop.css" type="text/css" />
+<link rel="stylesheet" href="css/yangshi.css">
+</head>
+<body>
+
+  <img src="/avatar/<%=avatar %>" id="target" alt="[Jcrop Example]" />
+  
+  <input type="button" value="剪切">
+  <div id="preview-pane">
+    <div class="preview-container">
+      <img src="/avatar/<%=avatar %>" class="jcrop-preview" alt="Preview" />
+    </div>
+  </div>
+</body>
+<script>
+ 
+  
+  $('input').click(function(){
+    var w=parseInt($('.jcrop-holder>div:first').css('width'));
+    var h=parseInt($('.jcrop-holder>div:first').css('height'));
+    var x=parseInt($('.jcrop-holder>div:first').css('left'));
+    var y=parseInt($('.jcrop-holder>div:first').css('top'));
+   $.get("/docut",
+      {
+        'w':w,
+        'h':h,
+        'x':x,
+        'y':y
+      },
+      function(result){
+        if(result==1){
+          alert('成功');
+         window.location='/';
+        }else{
+          alert('失败')
+        }
+      });
+  })
+</script>
+</html>
+

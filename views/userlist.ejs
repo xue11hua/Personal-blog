@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<script src="../js/jquery-3.2.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
+	<script src="../js/underscore.js"></script>
+	<title>所有成员</title>
+</head>
+<body>
+	<% include header.ejs %>
+	<h1>所有成员</h1>
+	<div class="list-group">
+		<%for(var i=0;i< suoyouchengyuan.length;i++){%>
+	  <a href="/user/<%=username%>" class="list-group-item">
+	  	<p class="list-group-item-text"><img width="60" src="/avatar/<%=suoyouchengyuan[i].avatar%>" alt=""></p>
+	    <h4 class="list-group-item-heading"><%=suoyouchengyuan[i].username%></h4>
+	    
+	  </a>
+	  <p><a href="/shanchu/<%=suoyouchengyuan[i]._id%>">删除用户</a></p>
+	  <%}%>
+	</div>
+</body>
+</html>

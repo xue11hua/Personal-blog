@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<script src="../js/jquery-3.2.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
+	<title>注册</title>
+</head>
+<body>
+	<% include header.ejs %>
+	<h1 style="text-align: center;">欢迎注册</h1>
+	<div class="center-block" style="width: 600px;">
+		<form class="form-horizontal" role="form">
+	  <div class="form-group">
+	    <label for="username" class="col-sm-2 control-label">用户名:</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="username" placeholder="请输用户名">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="password" class="col-sm-2 control-label">密码:</label>
+	    <div class="col-sm-10">
+	      <input type="password" class="form-control" id="password" placeholder="请输入密码">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="lastword" class="col-sm-2 control-label">再输密码:</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="lastword" placeholder="请再输入密码">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <div class="col-sm-offset-2 col-sm-10">
+	      <div class="checkbox">
+	        <label>
+	          <input type="checkbox">注册规定
+	        </label>
+	      </div>
+	    </div>
+	  </div>
+	  <div class="form-group">
+  　		<button type="button" id="btn" class="btn btn-default center-block">注册</button>
+	  </div>
+	</form>
+	<div class="alert alert-success" id="ts" role="alert"></div>
+	</div>
+	<script>
+	$('#btn').click(function(){
+		if(!$('#username').val()){
+			$('#ts').fadeIn().html('请输入用户名');
+		}else if(!$('#password').val()){
+			$('#ts').fadeIn().html('请输入密码');
+		}else if($('#password').val()!=$('#lastword').val()){
+			$('#ts').fadeIn().html('两次密码输入不一样');
+		}else{
+			regist();
+		}
+	})
+	function regist(){
+		$.post('/doregist',{
+				'username':$('#username').val(),
+				'password':$('#password').val(),
+
+			},function(result){
+				if(result=='1'){
+					$('#ts').fadeIn().html('成功');
+					setTimeout(tz(),3000);
+					
+				}else if(result=='-1'){
+					$('#ts').fadeIn().html('用户名被占用');
+				}else if(result=='-3'){
+					$('#ts').fadeIn().html('服务器错误');
+				}
+			})
+	}
+	$('input').focus(function(){
+		$('#ts').fadeOut();
+	})
+	function tz(){
+		window.location='/';
+	}
+		
+	</script>
+	<style>
+		#ts{display: none;}
+	</style>
+</body>
+</html>

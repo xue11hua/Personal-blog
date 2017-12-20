@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<script src="../js/jquery-3.2.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
+	<script src="../js/underscore.js"></script>
+	<script src="../js/moment.min.js"></script>
+	<title>博客</title>
+</head>
+<body>
+	<% include header.ejs %>
+	<%if(login){%>
+	<div class="col-lg-12 bg-info" style="padding:10px">
+	<div class="row col-lg-3">
+		 
+			  <p style="text-align: center;"><img style="margin: 10px;border-radius: 50px" width="100" src="/avatar/<%=avatar %>" alt=""></p>
+			  <p style="text-align: center;"><%=username%></p>
+			
+	</div>
+	
+	<div class="col-lg-3 ">
+		<h1>发表文章</h1>
+           <div class="form-group">
+
+	          <!-- Text input-->
+	          <label class="control-label" for="input01">标题：</label>
+	          <div class="controls">
+	            <input type="text" id="title" placeholder="输入标题" class="input-xlarge form-control">
+	          </div>
+	        </div>
+	        <div class="form-group">
+
+	          <!-- Textarea -->
+	          <label class="control-label">内容：</label>
+		          <div class="controls">
+		            <div class="textarea">
+		                  <textarea class="input-xlarge form-control" id="content" cols="120" rows="4" placeholder="输入内容"></textarea>
+		            </div>
+		          </div>
+	        </div>
+		<button id="fbpost" class="btn btn-primary">发布</button>
+	</div>
+	</div>
+	<%}%>
+	<div class="col-lg-12" style="margin-top: 20px;">
+		<div class="quanbu">
+			
+		</div>
+	</div>
+	<div class="col-lg-12">
+		<nav aria-label="Page navigation">
+		  <ul class="pagination">
+		    
+		  </ul>
+		</nav>
+	</div>
+	<script type="text/template" id="moban">
+		<div class="media">
+		  <div class="media-body">
+		    <h4 class="media-heading"><a href="/wordye/{{=_id}}">{{=title}}</a></h4>
+		    <p>{{=content}}......<a href="/wordye/{{=_id}}">详细</a></p>
+		    <p><img width="30" src="/avatar/{{=avatar}}" alt="..."><small>作者：{{=username}}</small><small>时间：{{=time}}</small></p>
+		  </div>
+		</div>
+	</script>
+</body>
+<style>
+	body{overflow-x: hidden;}
+</style>
+<script>
+	//发布文章
+	$('#fbpost').click(function(){
+		$.post('/fbpost',{
+			'title':$('#title').val(),
+			'content':$('#content').val()
+		},function(result){
+			if(result=='1'){
+				 window.location='/';
+
+			}else{
+				alert('失败')
+			}
+
+		})
+	})
+	var compiled=_.template($('#moban').html());
+	//读取文档
+	function getPage(page){
+
+	$('.quanbu').html('');
+	$.get('/getallshuoshuo?page='+page,function(result){
+		console.log(result.r);
+		for(var i=0;i<result.r.length;i++){
+			$.ajax(
+				{
+				url:'/getusersinfo?username='+result.r[i].username,
+				type:'get',
+				async:false,
+				success:function(result2){
+					result.r[i].avatar=result2.r.avatar;
+					result.r[i].time=moment(result.r[i].time).format("YYYY-MM-DD HH:mm:ss");
+					result.r[i].content=result.r[i].content.substr(0,260);
+
+					var htmlstring=compiled(result.r[i]);
+					$('.quanbu').append(htmlstring);
+				}
+			})
+		}
+	})
+	}
+	getPage(0);
+	//分页的总数
+	$.get('/shuoshuoamount',function(result){
+		var amount=parseInt(result);
+		pageamount=Math.ceil(amount/4);
+		for(var i=0;i<pageamount;i++){
+			$('.pagination').append("<li><a href='#'>"+parseInt(i+1)+"</a></li>")
+		}
+		$('.pagination li:first-child').addClass('active');
+		$('.pagination li').click(function(){
+			
+			var page=$(this).index();
+			console.log(page);
+			getPage(page);
+			$(this).addClass('active').siblings().removeClass('active');
+		})
+	})
+	
+</script>
+</html>

@@ -1,0 +1,36 @@
+<nav class="navbar-inverse">
+	  <div class="container-fluid">
+	    <div class="navbar-header">
+	      <a class="navbar-brand" href="#">博客</a>
+	      <ul class="nav navbar-nav navbar-left">
+	        <li <% if(active=="首页"){ %> class="active" <% } %> ><a href="/">全部文章</a></li>
+	        <%
+				if(login){
+	    	%>
+	         <li  <% if(active=="我的"){ %> class="active" <% } %> ><a href="/user/<%=username%>">我的文章</a></li>
+	         <li <% if(active=="成员"){ %> class="active" <% } %> ><a href="/userlist">成员列表</a></li>
+	         <%}%>
+	      </ul>
+	    </div>
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	    	<%
+				if(!login){
+	    	%>
+		      <ul class="nav navbar-nav navbar-right">
+		        <li <% if(active=="注册"){ %> class="active" <% } %>><a href="/regist">注册</a></li>
+		         <li <% if(active=="登陆"){ %> class="active" <% } %>><a href="/login">登陆</a></li>
+		      </ul>
+	      <%
+			}else{
+	      %>
+		      <ul class="nav navbar-nav navbar-right">
+		        <li><a href="#">欢迎<%=username%></a></li>
+		        <li><a href="/setavater">设置资料</a></li>
+		        <li><a href="/goout">退出</a></li>
+		      </ul>
+	      <%
+			}
+	      %>
+	    </div>
+	  </div>
+	</nav>
