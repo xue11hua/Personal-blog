@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+	<script src="../layui/layui.js" charset="utf-8"></script>
+	<script src="../js/jquery-3.2.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
+	<script src="../js/underscore.js"></script>
+	<script src="../js/moment.min.js"></script>
+  <script src="../socket.io/socket.io.js"></script>
+	<title>群聊</title>
+</head>
+<body>
+<% include ../header.ejs %>
+<div class="container">
+  
+
+  <div class="col-lg-3 col-xs-3">
+    <ul class="list-group">
+    <a href="" class="list-group-item">所有用户</a>
+    <%for(var i=0;i < resulta.length;i++){%>
+      <button class="btn btn-default btn-lg btn-block" <%if(resulta[i].username==username){%>disabled="disabled"<%}%>><%=resulta[i].username%></button>
+      <%}%>
+      <a href="" class="list-group-item">总数：<%=resulta.length%></a>
+    </ul>
+     <a href="" class="list-group-item">在线用户</a>
+    <ul id="shuju">
+      
+    </ul>
+  </div>
+  
+  <div class="col-lg-9 col-xs-9" style="width: 700px;">
+   <div class="chat-top">
+    <a href="/notifications/#/chats" class="back-to-list active"><i class="iconfont ic-back"></i> 返回 </a>  
+    <b id="b1">群聊</b>
+    <b id="b2" style="display: none;"><i><%=username%></i>与
+    
+    <a href="/u/b52ff888fd17" target="_blank" id="name"></a> 
+    
+     
+   的聊天 </b> 
+    <div class="">
+     <a data-toggle="dropdown" href="javascript:void(0);" aria-expanded="false"><i class="iconfont ic-show"></i></a> 
+     <ul class="dropdown-menu">
+      <!----> 
+      <li><a><i class="iconfont ic-block"></i>加入黑名单</a></li> 
+      <li><a class="report"><span><i class="iconfont ic-report"></i>举报用户</span></a></li>
+     </ul>
+    </div>
+   </div> 
+   <div class="message-show">
+    <!----> 
+    <ul class="message-list" id="nerong">
+     <li class="message-l">
+      <a href="" class="avatar">
+        <!-- <img src="" /> -->
+        系统
+      </a> 
+      <div id="xt">
+      
+      </div>
+      </li>
+     <!-- <li class="message-r">
+         <a href="" class="avatar">
+           <img src="" />
+         </a> 
+        <div>
+         <span class="content">你好</span>
+        </div> 
+        <span class="time">16:16</span>
+      </li> -->
+    </ul>
+   </div> 
+   <div class="write-message">
+    <form>
+     <textarea type="text" id="text" placeholder="输入内容" class="form-control"></textarea> 
+     <input class="btn btn-send" value="发送" id="fayan" />
+    </form> 
+    <div class="hint">
+     Enter 直接发送
+    </div>
+   </div> 
+   
+  </div>
+</div>
+</body>
+<style>
+.ic-show:before {
+  content: "X"
+}
+i{font-style: normal;}
+
+	.chat-top,.push-top {
+  position: fixed;
+  width: 625px;
+  z-index: 1;
+  min-height: 35px;
+  line-height: 35px;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  text-align: center;
+  background-color: #fff;
+  border-bottom: 1px solid #f0f0f0
+}
+
+.chat-top div,.push-top div {
+  display: inline
+}
+
+.chat-top .back-to-list,.push-top .back-to-list {
+  position: absolute;
+  top: 4px;
+  left: 10px;
+  font-size: 14px;
+  color: #969696
+}
+
+.chat-top .back-to-list:hover,.push-top .back-to-list:hover {
+  color: #2f2f2f
+}
+
+.chat-top .dropdown-menu a,.push-top .dropdown-menu a {
+  padding: 10px 20px
+}
+
+.chat-top b,.push-top b {
+  display: inline-block;
+  padding: 0 140px 0 160px;
+  font-size: 14px
+}
+
+.chat-top .more-option,.push-top .more-option {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+  font-size: 14px;
+  color: #969696
+}
+
+.chat-top .more-option span,.push-top .more-option span {
+  margin-left: 5px;
+  vertical-align: middle
+}
+
+
+
+.chat-top .ic-show {
+  position: absolute;
+  top: 0;
+  right: 15px
+}
+
+.push-top .more-option {
+  top: 3px
+}
+.message-list {
+  margin: 0;
+  padding: 10px 0 110px
+}
+
+.message-show {
+  padding-top: 46px
+}
+
+.message-show .message-list {
+  margin: 0;
+  padding: 10px 0 110px
+}
+
+.message-show li {
+  margin-bottom: 15px;
+  overflow: hidden
+}
+
+.message-show li div {
+  position: relative;
+  display: block;
+  margin: 4px 56px 0;
+  min-height: 39px
+}
+
+.message-show li div:after,.message-show li div:before {
+  position: absolute;
+  top: 0;
+  content: "";
+  display: inline-block
+}
+
+.message-show li div:after {
+  top: 1px
+}
+
+.message-show li div .content {
+  position: relative;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid;
+  word-break: break-word!important;
+  word-break: break-all;
+  line-height: 1.5;
+  display: table-cell
+}
+
+.message-show .time {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #d9d9d9
+}
+
+.message-show .avatar {
+  width: 40px;
+  height: 40px
+}
+
+.message-show .message-l .avatar {
+  float: left
+}
+
+.message-show .message-l div:after,.message-show .message-l div:before {
+  left: -9px;
+  border-left: 9px solid transparent;
+  border-top: 16px solid #bad0e9
+}
+
+.message-show .message-l div:after {
+  left: -7px;
+  border-top: 16px solid #e7f1fc
+}
+
+.message-show .message-l div .content {
+  min-height: 39px;
+  background-color: #e7f1fc;
+  border-color: #bad0e9;
+  border-radius: 0 4px 4px 4px
+}
+
+.message-show .message-l div a {
+  color: #3194d0
+}
+
+.message-show .message-l .time {
+  margin-left: 56px
+}
+
+.message-show .message-r .avatar {
+  float: right
+}
+
+.message-show .message-r div:after,.message-show .message-r div:before {
+  right: -9px;
+  border-right: 9px solid transparent;
+  border-top: 16px solid #d9d9d9
+}
+
+.message-show .message-r div:after {
+  right: -7px;
+  border-top: 16px solid #eee
+}
+
+.message-show .message-r div .content {
+  float: right;
+  min-height: 39px;
+  background-color: #eee;
+  border-color: #d9d9d9;
+  border-radius: 4px 0 4px 4px
+}
+
+.message-show .message-r div a {
+  color: #3194d0
+}
+
+.message-show .message-r .time {
+  float: right;
+  margin-right: 56px
+}
+
+.message-show .load-more {
+  margin: 0 auto;
+  background: none;
+  font-size: 14px;
+  color: #3194d0
+}
+.write-message .hint {
+  padding-top: 3px;
+  font-size: 13px;
+  color: #969696
+}
+.write-message {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  margin-top: 15px;
+  background-color: #fff
+}
+
+.write-message form {
+  max-width: 625px
+}
+
+.write-message form:before {
+  position: absolute;
+  content: "";
+  left: 0;
+  margin-top: -20px;
+  height: 20px;
+  width: 625px;
+  background-image: linear-gradient(0deg,#fff,hsla(0,0%,100%,0))
+}
+
+.write-message .form-control {
+  background-color: hsla(0,0%,71%,.1)
+}
+
+.write-message .hint {
+  padding-top: 3px;
+  font-size: 13px;
+  color: #969696
+}
+
+.write-message .emoji {
+  float: left;
+  margin-top: 15px
+}
+
+.write-message .emoji i {
+  font-size: 20px;
+  color: #969696
+}
+
+.write-message .emoji i:hover {
+  color: #2f2f2f
+}
+
+.write-message .btn-send {
+  float: right;
+  width: 78px;
+  margin: 10px 0;
+  padding: 8px 18px;
+  font-size: 16px;
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  background-color: #42c02e;
+  cursor: pointer;
+  outline: none;
+  display: block
+}
+
+.write-message .btn-send:hover {
+  background-color: #3db922
+}
+
+.message-show li {
+  margin-bottom: 15px;
+  overflow: hidden
+}
+
+.message-show li div {
+  position: relative;
+  display: block;
+  margin: 4px 56px 0;
+  min-height: 39px
+}
+
+.message-show li div:after,.message-show li div:before {
+  position: absolute;
+  top: 0;
+  content: "";
+  display: inline-block
+}
+
+.message-show li div:after {
+  top: 1px
+}
+
+.message-show li div .content {
+  position: relative;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid;
+  word-break: break-word!important;
+  word-break: break-all;
+  line-height: 1.5;
+  display: table-cell
+}
+.message-show .message-l .avatar {
+  float: left
+}
+.avatar img{
+  width: 100%
+}
+.ic-show {
+  color: #969696
+}
+.chat-top b,.push-top b {
+  display: inline-block;
+  padding: 0 140px 0 160px;
+  font-size: 14px
+}
+  .dropdown-menu {
+  top: auto;
+  left: auto;
+  right: 15px;
+  color: #333;
+  min-width: inherit
+}
+
+.dropdown-menu li {
+  border: none!important
+}
+
+.dropdown-menu i {
+  margin-right: 10px
+}
+
+</style>
+<script>
+  var usearr=[];
+  var lusearr=[];
+	var socket=io();
+  var user="<%=username%>";
+  var element=document.getElementById("nerong");
+  console.log(user);
+  //注册
+  socket.emit('chat-reg',{user:user});
+  //离开
+  socket.emit('disconnect',{user:user});
+  //发送消息
+    document.getElementById('fayan').onclick=function(){
+      //socket.emit('newUser',{ user_name : name, user_id : id})
+      socket.emit('liaotian',{
+        'text':document.getElementById('text').value,
+        'name':document.getElementById('name').innerHTML,
+        'fname':user,
+      });
+      document.getElementById('text').value='';
+    }
+   
+   //获取消息
+    socket.on('liaotian',function(msg){
+       var xxts=document.getElementById("gyxx").innerHTML;
+      //console.log(msg);
+      var imgurl="";
+      var time=moment(new Date).format("YYYY-MM-DD h:mm:ss");
+      if(msg.msg.fname==user){
+        usearr.push(msg);
+        var obj=JSON.stringify(usearr);
+        localStorage.obj=obj;
+        str=localStorage.obj;
+        console.log(str);
+        var para='<li class="message-r"><a href="" class="avatar">'+msg.msg.fname+'</a><div><span class="content">'+msg.msg.text+'</span></div><span class="time">'+time+'</span></li>'
+
+      }else{
+        lusearr.push(msg);
+        var lobj=JSON.stringify(lusearr);
+        localStorage.lobj=lobj;
+        lstr=localStorage.lobj;
+        console.log(lstr);
+        document.getElementById("gyxx").innerHTML=parseInt(++xxts);
+        var para='<li class="message-l"><a href="" class="avatar">'+msg.msg.fname+'</a><div><span class="content">'+msg.msg.text+'</span></div><span class="time">'+time+'</span></li>'
+      }
+      
+      //var para="<li><b>"+msg.name+"说：</b>"+msg.text+"</li>"
+      
+      element.innerHTML=element.innerHTML+para;
+    })
+    //注册用户
+    socket.on('chat-reg',function(data){
+      console.log(JSON.stringify(data));
+     });
+    //监听断开
+    socket.on('disconnect',function(data){
+      var xt=document.getElementById('xt');
+      console.log('user disconnected');
+      var dm= '<span class="content">'+data.logoutuser+'离开聊天</span>';
+      xt.innerHTML=xt.innerHTML+dm;
+
+      var shuju=document.getElementById('shuju');
+       shuju.innerHTML='';
+      var zm= '<li class="list-group-item">总数:'+data.num+'</li>';
+      for(var s=0;s<data.onlineuser.length;s++){
+          var dm= '<li class="list-group-item">用户:'+data.onlineuser[s]+'</li>';
+          shuju.innerHTML=shuju.innerHTML+dm;
+      }
+     shuju.innerHTML=shuju.innerHTML+zm;
+
+     });
+    //所有用户的信息
+    socket.on('loginnum',function(data){
+      var xt=document.getElementById('xt');
+      var dm= '<span class="content"> 欢迎'+data.existName+'加入聊天</span>';
+      xt.innerHTML=xt.innerHTML+dm;
+
+      var shuju=document.getElementById('shuju');
+       shuju.innerHTML='';
+      var zm= '<li class="list-group-item">总数:'+data.num+'</li>';
+      for(var s=0;s<data.onlineuser.length;s++){
+         var dm= '<li class="list-group-item">用户:'+data.onlineuser[s]+'</li>';
+          shuju.innerHTML=shuju.innerHTML+dm;
+      }
+     shuju.innerHTML=shuju.innerHTML+zm;
+
+     });
+    socket.on("existname", function (data) {
+         var shuju=document.getElementById('shuju');
+          var zm= '<li class="list-group-item">总数:'+data.num+'</li>';
+          shuju.innerHTML='';
+          for(var s=0;s<data.onlineuser.length;s++){
+             var dm= '<li class="list-group-item">用户:'+data.onlineuser[s]+'</li>';
+              shuju.innerHTML=shuju.innerHTML+dm;
+          }
+          shuju.innerHTML=shuju.innerHTML+zm;
+    });
+
+
+    //切换人
+    var tabli=$('.list-group button');
+    for(var i=0;i<tabli.length;i++){
+      tabli[i].onclick=function(){
+         for(var i=0;i<tabli.length;i++){
+           tabli[i].className="btn btn-default btn-lg btn-block";
+         }
+
+          document.getElementById('b1').style.display='none';
+          document.getElementById('b2').style.display='block';
+        this.className="btn btn-primary btn-lg btn-block";
+
+        document.getElementById('name').innerHTML=this.innerHTML;
+
+      }
+    }
+    //自己的消息
+    if(localStorage.obj){
+     str=localStorage.obj;
+     obj = JSON.parse(str);
+     console.log(obj);
+    for(var j=0;j<obj.length;j++){
+       var para='<li class="message-r"><a href="" class="avatar">'+obj[j].msg.fname+'</a><div><span class="content">'+obj[j].msg.text+'</span></div></li>'
+       element.innerHTML=element.innerHTML+para;
+    }
+     }
+     //别人的消息
+     if(localStorage.lobj){
+      lstr=localStorage.lobj;
+       lobj = JSON.parse(lstr);
+       console.log(lobj);
+    for(var j=0;j<lobj.length;j++){
+       var para='<li class="message-l"><a href="" class="avatar">'+lobj[j].msg.fname+'</a><div><span class="content">'+lobj[j].msg.text+'</span></div></li>'
+       element.innerHTML=element.innerHTML+para;
+    }
+  }
+   
+
+</script>
+</html>

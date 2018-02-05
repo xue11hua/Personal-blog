@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>我的相册</title>
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+	<script src="../layui/layui.js" charset="utf-8"></script>
+	<script src="../js/jquery-3.2.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
+	<script src="../js/underscore.js"></script>
+	<script src="../js/moment.min.js"></script>
+</head>
+<body>
+	<% include ../header.ejs %>
+	<div class="container">
+	<form action="/doxiangce" enctype="multipart/form-data" method="post">
+		 <div class="form-group">
+		 	<input type="hidden" value="<%=resulta[0].username%>" name='name'>
+		    <label class="btn btn-info" for="file">请选择文件：</label>
+
+		    <input type="file" id="file" name="file" multiple style="display: none;"  onchange="showPicture(this)"/>
+		    <div id="imgBox">
+		    	
+		    </div>
+		    <p class="help-block">每次只能传两个</p>
+		  </div>
+		<input type="submit" class="btn btn-primary" value="上传文件" />
+	</form>
+	<div class="row" style="margin-top: 30px;">
+	<%if(result){%>
+		<%for(var i=0;i< result.length;i++){%>
+		  <div class="col-sm-3 col-md-3">
+		    <div class="thumbnail">
+		      <img onclick="imgDisplay(this)" src="../upload/<%=result[i].username%>/<%=result[i].url%>" alt="...">
+		     
+		      <div class="caption">
+		        <p>
+		        	<small><i class="glyphicon glyphicon-user"></i><%=result[i].username%></small>
+		        	<small><i class="glyphicon glyphicon-time"></i><%=result[i].time%></small>
+		        	<small class="stp"><a class="glyphicon glyphicon-trash" href="/doshanxiangce/<%=result[i]._id%>"></a></small>
+		        </p>
+		      </div>
+		    </div>
+		  </div>
+		  <%}%>
+	   <%}%>
+	</div>
+	</div>
+	<script>
+	var imgSrc = []; //图片路径
+	var imgFile = []; //文件流
+	var imgName = []; //图片名字
+	var imgBox=$('#imgBox');
+	function showPicture(imgF){
+		var fileList=imgF.files;
+		for(var i = 0; i < fileList.length; i++) {
+					var imgSrcI = getObjectURL(fileList[i]);
+					imgName.push(fileList[i].name);
+					imgSrc.push(imgSrcI);
+					imgFile.push(fileList[i]);
+				}
+				addNewContent(imgBox);
+}
+//图片展示
+function addNewContent(obj) {
+	$(imgBox).html("");
+	for(var a = 0; a < imgSrc.length; a++) {
+		var oldBox = $(obj).html();
+		$(obj).html(oldBox + '<div class="imgContainer"><img title=' + imgName[a] + ' alt=' + imgName[a] + ' src=' + imgSrc[a] + ' ></div>');
+	}
+}
+//查看大图
+function imgDisplay(obj) {
+	var src = $(obj).attr("src");
+	var imgHtml = '<div style="width: 100%;height: 100vh;overflow: auto;background: rgba(0,0,0,0.5);text-align: center;position: fixed;top: 0;left: 0;z-index: 1000;"><img src=' + src + ' style="margin-top: 100px;width: 70%;margin-bottom: 100px;"/><p style="font-size: 50px;position: fixed;top: 30px;right: 30px;color: white;cursor: pointer;" onclick="closePicture(this)">×</p></div>'
+	$('body').append(imgHtml);
+}
+//关闭
+function closePicture(obj) {
+	$(obj).parent("div").remove();
+}
+//图片预览路径
+function getObjectURL(file) {
+	var url = null;
+	if(window.createObjectURL != undefined) { // basic
+		url = window.createObjectURL(file);
+	} else if(window.URL != undefined) { // mozilla(firefox)
+		url = window.URL.createObjectURL(file);
+	} else if(window.webkitURL != undefined) { // webkit or chrome
+		url = window.webkitURL.createObjectURL(file);
+	}
+	return url;
+}
+//删除
+function removeImg(obj, index) {
+	imgSrc.splice(index, 1);
+	imgFile.splice(index, 1);
+	imgName.splice(index, 1);
+	var boxId = "#" + $(obj).parent('.imgContainer').parent().attr("id");
+	addNewContent(boxId);
+}
+	</script>
+	<style>
+		.container{
+			margin-top: 40px;
+		}
+		.imgContainer{
+				display: inline-block;
+				margin-left: 1%;
+				border: 1px solid #666666;
+				position: relative;
+				margin-top: 30px;
+				box-sizing: border-box;
+			}
+			.imgContainer img{
+				width: 100%;
+				height: 150px;
+				cursor: pointer;
+			}
+			.imgContainer p{
+				position: absolute;
+				bottom: -1px;
+				left: 0;
+				width: 100%;
+				height: 30px;
+				background: black;
+				text-align: center;
+				line-height: 30px;
+				color: white;
+				font-size: 16px;
+				font-weight: bold;
+				cursor: pointer;
+				display: none;
+			}
+			.imgContainer:hover p{
+				display: block;
+			}
+
+	</style>
+</body>
+</html>

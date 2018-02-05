@@ -15,19 +15,25 @@
 	  <div class="form-group">
 	    <label for="username" class="col-sm-2 control-label">用户名:</label>
 	    <div class="col-sm-10">
-	      <input type="text" class="form-control" id="username" placeholder="请输用户名">
+	      <input type="text" class="form-control" id="username" placeholder="请输用户名不能有空格">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="username" class="col-sm-2 control-label">输入邮箱:</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="useremail" placeholder="请输入邮箱">
 	    </div>
 	  </div>
 	  <div class="form-group">
 	    <label for="password" class="col-sm-2 control-label">密码:</label>
 	    <div class="col-sm-10">
-	      <input type="password" class="form-control" id="password" placeholder="请输入密码">
+	      <input type="password" class="form-control" id="password" placeholder="请输入密码不能有空格">
 	    </div>
 	  </div>
 	  <div class="form-group">
 	    <label for="lastword" class="col-sm-2 control-label">再输密码:</label>
 	    <div class="col-sm-10">
-	      <input type="text" class="form-control" id="lastword" placeholder="请再输入密码">
+	      <input type="password" class="form-control" id="lastword" placeholder="请再输入密码不能有空格">
 	    </div>
 	  </div>
 	  <div class="form-group">
@@ -43,24 +49,45 @@
   　		<button type="button" id="btn" class="btn btn-default center-block">注册</button>
 	  </div>
 	</form>
-	<div class="alert alert-success" id="ts" role="alert"></div>
+	<div class="alert alert-success" id="ts" role="alert" style="display: none;"></div>
 	</div>
 	<script>
 	$('#btn').click(function(){
-		if(!$('#username').val()){
-			$('#ts').fadeIn().html('请输入用户名');
-		}else if(!$('#password').val()){
-			$('#ts').fadeIn().html('请输入密码');
-		}else if($('#password').val()!=$('#lastword').val()){
-			$('#ts').fadeIn().html('两次密码输入不一样');
-		}else{
-			regist();
-		}
+		var reg = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+		var username=$('#username').val();
+		var password=$('#password').val();
+		var lastword=$('#lastword').val();
+		var useremail=$('#useremail').val();
+		var isok= reg.test(useremail);
+		if (username.indexOf(" ")!=-1 || !username) {
+			   $('#username').focus().val(''); 
+			   $('#ts').fadeIn().html('请正确输入用户名');
+			}else if(password.indexOf(" ") != -1 || lastword.indexOf(" ") != -1 ){
+				$('#password').focus().val('');
+				$('#lastword').val(''); 
+			   $('#ts').fadeIn().html('请正确输入密码');
+			}else if(password!=lastword){
+				$('#password').focus().val('');
+				$('#lastword').val('');
+				$('#ts').fadeIn().html('两次密码输入不一样');
+			}else if(!password||!lastword){
+				$('#password').focus().val('');
+				$('#lastword').val(''); 
+			   $('#ts').fadeIn().html('请输入密码');
+				
+			}else if(!isok){
+				$('#useremail').focus().val('');
+				$('#ts').fadeIn().html('邮箱格式不正确，请重新输入！');
+			}else{
+				regist();
+			}
+		
 	})
 	function regist(){
 		$.post('/doregist',{
 				'username':$('#username').val(),
 				'password':$('#password').val(),
+				'useremail':$('#useremail').val(),
 
 			},function(result){
 				if(result=='1'){
@@ -82,8 +109,6 @@
 	}
 		
 	</script>
-	<style>
-		#ts{display: none;}
-	</style>
+	
 </body>
 </html>

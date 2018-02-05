@@ -84,11 +84,27 @@ exports.updateMany=function(collectionName,json1,json2,callback){
 			})
 	})
 }
+
+//push插入数组
+exports.update=function(collectionName,whereStr,updateStr,callback) {  
+		    //连接到表  
+		    //var collection = db.collection('liuyan');
+		    //更新数据
+		    //var whereStr = {"username" : "11"};
+		    //var updateStr = {$push:{liuyan:{$each:[{"wk":1,"score":10},{"wk":1,"score":10}]}}};
+		    _connectDB(function(err,db){
+		       db.collection(collectionName).update(whereStr,updateStr, function(err, result) {
+		          callback(err,result);
+		       });
+		    })
+		}
+
+
 //差总数据数量
-exports.getAllCount=function(collectionName,callback){
+exports.getAllCount=function(collectionName,json,callback){
 	_connectDB(function(err,db){
 		console.log('aa');
-		db.collection(collectionName).count({}).then(function(count){
+		db.collection(collectionName).count(json).then(function(count){
 			console.log(count);
 			callback(count);
 			db.close();
@@ -96,6 +112,10 @@ exports.getAllCount=function(collectionName,callback){
 	})
 
 }
+
+
+
+
 //创建索引
 // init();
 // function init(){
@@ -120,3 +140,17 @@ exports.getAllCount=function(collectionName,callback){
 // 			)
 // 	})
 // }
+
+
+
+
+// db.posts.update({"username":"11")},{$pull:{"shoucang.username":"11"}})
+
+// db.posts.update({"username":"11"},{$pop:{"shoucang":0}})
+// db.posts.update({"username":"11"},{$pop:{"shoucang":"0"}})
+// db.posts.update({"shoucang":{"$exists":true}},{"$unset":{"shoucang",""}},{multi:true});
+
+// db.posts.find( { "shoucang.username": { $exists: true } } )
+// db.posts.update({"username":"11"},{$unset:{"shoucang.username":""}},{multi:true})
+
+//db.posts.update({"_id" : ObjectId("5a45f3f25f81ec102c1b3291")},{$pull:{"shoucang":{"username":"11"}}});

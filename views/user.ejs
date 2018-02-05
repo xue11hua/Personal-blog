@@ -6,22 +6,154 @@
 	<script src="../js/jquery-3.2.1.js"></script>
 	<script src="../js/bootstrap.js"></script>
 	<script src="../js/underscore.js"></script>
-	<title><%=user%>的个人主页</title>
+	<script src="../js/moment.min.js"></script>
+	<title><%=user%></title>
 </head>
 <body>
 	<% include header.ejs %>
-	<div class="row col-lg-3">
-		 
-			  <p style="text-align: center;"><img style="margin: 10px;border-radius: 50px" width="100" src="/avatar/<%=avatar %>" alt=""></p>
-			  <p style="text-align: center;"><%=user%>的个人主页</p>
-			
-	</div>
 	
-	<div class="row col-lg-12">
-	<h1>所有文章</h1>
-		<%for(var i=0;i< cerenshuo.length;i++){%>
-			<p><a href="/wordye/<%=cerenshuo[i]._id%>"><%=cerenshuo[i].title%></a></p>
-		<%}%>
+	<div class="media container" style="box-shadow:none;background: #f3f3f3">
+	  <div class="media-left">
+	    <a href="#">
+	      <img class="img-circle" width="60" height="60" src="/avatar/<%=avatar %>" alt="...">
+	    </a>
+	  </div>
+	  <div class="media-body">
+	    <h4 class="media-heading"><%=user%></h4>
+	    <div class="media-bodya">
+	    	<%if(username!=user){%>
+				<%if(resultb==1){%>
+				 <span class="label label-success"><a href="/guanzhu/<%=user%>">已关注</a></span>
+				<%}else{%>
+				 <span class="label label-danger"><a href="/guanzhu/<%=user%>">关注</a></span>
+				<%}%>
+				<%}%>
+	    </div>
+	  </div>
 	</div>
+
+
+	<div class="row col-lg-12">
+	<ul id="nav" class="nav nav-tabs nav-justified" style="width: 1200px;margin:0 auto;margin-bottom: 40px;">
+  		<li role="presentation" <% if(active=="我的主页"){ %> class="active" <% } %>><a href="/user/<%=user%>">主页</a></li>
+        <li role="presentation" <% if(active=="我的收藏"){ %> class="active" <% } %> ><a href="/shoucang/<%=user%>">收藏
+       		
+             <%if(scgs){%>
+				<span class="badge" ><%=scgs%></span>
+	         <%}%>
+	   
+	         </a></li>
+	         <%if(login && username==user){%>
+		        <li role="presentation" <% if(active=="我的消息"){ %> class="active" <% } %> ><a href="/doursexiaoxi">消息
+			        <%if(xiaoxi){%>
+						<span class="badge" style="background: red"><%=xiaoxi%></span>
+			         <%}%>
+		        </a>
+		        </li>
+         	<%}%>
+         	<li role="presentation" <% if(active=="我的关注"){ %> class="active" <% }%>><a href="/doguanzhu/<%=user%>">
+         	关注
+         	<%if(resulta[0].guanzhu){%>
+         	<span class="badge" style="background: #777"><%=resulta[0].guanzhu.length%></span>
+         	<%}%>
+         	</a></li>
+	</ul>
+	<%if(active=="我的消息"){%>
+	   </div>
+	   <%for(var i=0;i< liuyan.length;i++){%>
+	   <%if(liuyan[i].liuyan){%>
+			<%for(var j=0;j< liuyan[i].liuyan.length;j++){%>
+
+				 <%if(liuyan[i].liuyan[j].user==username){%>
+					
+					<div class="media qxxi" style="margin:0 auto;width: 1200px;margin-top: 5px;">
+						<div class="media-body-divb">
+						  <small><i class="glyphicon glyphicon-user"></i><%=liuyan[i].liuyan[j].username%></small>在<small><a href="/wordye/<%=liuyan[i].wzid%>"><%=liuyan[i].liuyan[j].wztitle%></a></small><small>回复</small><small ><i class="glyphicon glyphicon-user"></i><%=liuyan[i].liuyan[j].user%></small><small ><i class="glyphicon glyphicon-time"></i><%=liuyan[i].liuyan[j].time%></small>
+						  </div>
+						 <div class="media-body-diva"><%=liuyan[i].liuyan[j].content%></div>
+					  </div>
+				<%}%>
+	           <%}%>
+			<%}%>
+		<%}%>
+	  
+	    <%}else if(active=="我的关注"){%>
+
+	    	<%if(resulta[0].guanzhu){%>
+	    	
+			<%for(var i=0;i< resulta[0].guanzhu.length;i++){%>
+					<div class="page-header container">
+					  <h1><a href="/user/<%=resulta[0].guanzhu[i].username%>"><img width="60" src="/avatar/<%=resulta[0].guanzhu[i].avatar %>" alt=""><small><%=resulta[0].guanzhu[i].username%></small></a></h1>
+					</div>
+				<%}%>
+			<%}%>
+		<%}else{%>
+		<%for(var i=0;i< cerenshuo.length;i++){%>
+		<div class="media" style="margin:0 auto;width: 1200px;margin-top: 20px;">
+		  <div class="media-left">
+		    <a href="#">
+		      <img width="140" class="media-object" src="/avatar/<%=avatar %>" alt="...">
+		    </a>
+		  </div>
+		  <div class="media-body">
+		  	<div class="media-body-diva">
+		  		<h4 class="media-heading"><a href="/wordye/<%=cerenshuo[i]._id%>"><%=cerenshuo[i].title%></a></h4>
+		       <p><%-cerenshuo[i].content%>......<a href="/wordye/<%=cerenshuo[i]._id%>">详细</a></p>
+		  	</div>
+		     <div class="media-body-divb">
+		    	<small><i class="glyphicon glyphicon-user"></i><%=cerenshuo[i].username%></small>
+		    	<small><i class="glyphicon glyphicon-eye-open"></i><%=cerenshuo[i].look%></small>
+		    	<small><i class="glyphicon glyphicon-comment"></i><%=cerenshuo[i].ts%></small>
+		    	<small><i class="glyphicon glyphicon-tag"></i><%=cerenshuo[i].classification%></small>
+		    	<%if(cerenshuo[i].username==username || username==admin){%>
+		    	<small><a class="glyphicon glyphicon-trash" href="/shanchuwz/<%=cerenshuo[i]._id%>"></a></small>
+		    	<%}%>
+		    </div>
+		  </div>
+		</div>
+		<%}%>
+<%}%>
+	  <script>
+	  	var qxxi=$('.qxxi');
+	  	for(var i=0;i<qxxi.length;i++){
+	  		qxxi[i].onclick=function(){
+	  			var indexq=this.index;
+	  			$.post('/dockursexiaoxi',{
+				},function(result){
+					if(result=='1'){
+						 history.go(0);
+
+					}else{
+						alert(result)
+					}
+
+				})
+	  		}
+	  	}
+
+	  </script>
+	  <style>
+	  .media{
+	  	background: #fff;
+	  	padding:16px 20px;
+	  	border-radius:2px;
+	  	box-shadow:0 1px 3px rgba(0,0,0,.1);
+	  }
+	  .media .media-body-diva{
+	  	padding:16px 0px 0px 20px;
+	  }
+	   .media small{
+	   	padding-left: 8px;
+	   }
+		.media i{
+			padding-right:3px; 
+		}
+		.media-bodya{
+			margin-top: 20px;
+		}
+		.media-bodya a{
+			color: #ffffff
+		}
+	  </style>
 </body>
 </html>

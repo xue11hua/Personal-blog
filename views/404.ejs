@@ -1,0 +1,36 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>对不起，我迷路了</title>
+    <style type="text/css">
+        * { margin:0; padding:0; }
+        body { font:normal 14px/1.5 Tahoma, Helvetica, arial, sans-serif; color:#000; background:#fff 0 365px repeat-x; }
+        .main { position:relative; width:488px; height:503px; margin:77px auto 0; background:url(../images/404.jpg);background-size: 100% }
+        .main .text-link { position:absolute; left:195px; top:500px; display:block; font-size:14px; color:#00BBBB; text-decoration:none; cursor:pointer; }
+        .main .text-link:hover { color:#F76120; text-decoration:underline; }
+        .main .timer { padding-right:5px; font-weight:bold; }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <a class="text-link" href="/"><span class="timer" id="J-timer">5</span>秒后自动返回首页</a>
+    </div>
+    <script type="text/javascript">
+    window.onload = function () {
+        var timer = document.getElementById('J-timer'),
+            timeout = 5,
+            url = '/';
+
+        var interval = window.setInterval(function () {
+            if (timeout <= 0) {
+                window.location = url;
+                window.clearInterval(interval);
+            } else {
+                timer.innerHTML = timeout;
+                timeout--;
+            }
+        }, 1000);
+    }
+    </script>
+</body>
+</html>

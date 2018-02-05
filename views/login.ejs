@@ -29,7 +29,7 @@
 	    <div class="col-sm-offset-2 col-sm-10">
 	      <div class="checkbox">
 	        <label>
-	          <input type="checkbox">记住密码
+	        <a href="/forget">忘记密码</a>
 	        </label>
 	      </div>
 	    </div>
@@ -38,13 +38,17 @@
   　		<button type="button" id="btn" class="btn btn-default center-block">登陆</button>
 	  </div>
 	</form>
-	<div class="alert alert-success" id="ts" role="alert"></div>
+	<div class="alert alert-success" id="ts" role="alert" style="display: none;"></div>
 	</div>
 	<script>
 	$('#btn').click(function(){
-		if(!$('#username').val()){
+		var username=$('#username').val();
+		var password=$('#password').val();
+		if(username.indexOf(" ")!=-1){
+			$('#username').focus().val(''); 
 			$('#ts').fadeIn().html('请输入用户名');
-		}else if(!$('#password').val()){
+		}else if(password.indexOf(" ")!=-1){
+			$('#password').focus().val(''); 
 			$('#ts').fadeIn().html('请输入密码');
 		}else{
 			login();
@@ -77,8 +81,6 @@
 	}
 		
 	</script>
-	<style>
-		#ts{display: none;}
-	</style>
+	
 </body>
 </html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="../css/bootstrap.css">
+	<link rel="stylesheet" href="../layui/css/layui.css"  media="all">
+	<script src="../layui/layui.js" charset="utf-8"></script>
+	<script src="../js/jquery-3.2.1.js"></script>
+	<script src="../js/bootstrap.js"></script>
+	<script src="../js/underscore.js"></script>
+	<script src="../js/moment.min.js"></script>
+	<title>设置信息</title>
+</head>
+<body>
+	<% include ../header.ejs %>
+	<div class="container" style="margin-top: 60px">
+	  	<% include userdaohang.ejs %>
+	  	<div class="col-lg-6">
+		
+		<form class="layui-form" action="">
+		<ul class="list-group">
+		<a href="#" class="list-group-item active">
+				   修改信息
+				  </a>
+		</ul>
+		
+		  <div class="layui-form-item">
+		    <label class="layui-form-label">昵称</label>
+		    <div class="layui-input-inline">
+		      <input type="text" name="name" required <%if(resulta.xiangxi){%>value="<%=resulta.xiangxi.name%>"<%}%>  lay-verify="required" placeholder="请输入昵称" autocomplete="off" class="layui-input">
+		    </div>
+		  </div>
+		 
+		   <div class="layui-form-item">
+		    <label class="layui-form-label">性别</label>
+		    <div class="layui-input-block">
+		      <input type="radio" name="sex" value="男" title="男" <%if(resulta.xiangxi){%><%if(resulta.xiangxi.sex=='男'){%>checked <%}%><%}%>>
+		      <input type="radio" name="sex" value="女" title="女" <%if(resulta.xiangxi){%><%if(resulta.xiangxi.sex=='女'){%>checked <%}%><%}%> >
+		    </div>
+		  </div>
+		  <div class="layui-form-item">
+		    <label class="layui-form-label">QQ</label>
+		    <div class="layui-input-inline">
+		      <input type="email" name="email" required <%if(resulta.xiangxi){%> value="<%=resulta.xiangxi.email%>" <%}%> lay-verify="required" placeholder="请输入QQ" autocomplete="off" class="layui-input">
+		    </div>
+		  </div>
+		   <div class="layui-form-item">
+		      <label class="layui-form-label">生日</label>
+		      <div class="layui-input-inline">
+		        <input type="text" name="shengri" <%if(resulta.xiangxi){%> value="<%=resulta.xiangxi.shengri%>" <%}%> class="layui-input" id="test1" placeholder="yyyy-MM-dd">
+		      </div>
+		    </div>
+		 
+		  <div class="layui-form-item layui-form-text">
+		    <label class="layui-form-label">简介</label>
+		    <div class="layui-input-inline">
+		      <textarea name="desc" <%if(resulta.xiangxi){%>data-id='<%=resulta.xiangxi.desc%>' <%}%>placeholder="请输入简介" class="layui-textarea"></textarea>
+		    </div>
+		  </div>
+		 
+		  <div class="layui-form-item">
+		    <div class="layui-input-block">
+		      <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+		      <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+		    </div>
+		  </div>
+		</form>
+		</div>
+		<div class="col-lg-3">
+			 <div class="form-group">
+		    <label for="exampleInputEmail1">头像</label>
+		    <p><img width="100" src="/avatar/<%=avatar %>" alt="" class="img-rounded"></p>
+		    <a href="/setavater" class="layui-btn" target="_blank">设置头像</a>
+		  </div>
+		</div>
+	</div>
+
+</body>
+<script>
+	layui.use('laydate', function(){
+		  var laydate = layui.laydate;
+		  //常规用法
+		  laydate.render({
+		    elem: '#test1'
+		  });
+		   });
+	$('textarea').text($('textarea').data('id'));
+	layui.use('form', function(){
+	  var form = layui.form;
+	  //监听提交
+	  form.on('submit(formDemo)', function(data){
+	  	console.log(data.field);
+	    $.post('/baocunxinxi',{
+			        "name":data.field.name,
+					"sex":data.field.sex,
+					"shengri":data.field.shengri,
+					"email":data.field.email,
+					"desc":data.field.desc,
+		},function(result){
+			if(result=='1'){
+				  layer.msg('成功');
+
+			}else if(result=='-1'){
+				layer.msg('用户名被占用');
+			}else{
+				layer.msg('网络错误');
+			}
+
+		})
+	    return false;
+	  });
+  });
+</script>
+</html>
